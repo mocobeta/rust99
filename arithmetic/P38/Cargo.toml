@@ -1,0 +1,11 @@
+[package]
+name = "P38"
+version = "0.1.0"
+authors = ["Tomoko Uchida <tomoko.uchida.1111@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+P34 = { path = "../P34" }
+P37 = { path = "../P37" }

@@ -22,7 +22,7 @@ See [rust-toolchain](./rust-toolchain) file.
 
 ## Sections
 
-The collection consists of a few sections; let's start to exlore them from the following links!
+The collection consists of a few sections; let's exlore them from the following links!
 
 - (P01-P28) [Working with Vectors and Iterators](./working-with-vectors/README.md)
 - (P31-P41) [Arithmetic](./arithmetic/README.md)

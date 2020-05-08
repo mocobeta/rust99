@@ -27,7 +27,7 @@ The collection consists of a few sections; let's exlore them from the following 
 - (P01-P28) [Working with Vectors and Iterators](./working-with-vectors/README.md)
 - (P31-P41) [Arithmetic](./arithmetic/README.md)
 - (P46-P50) [Logic and Codes](./logic-and-codes/README.md)
-- (TBD) Binary Trees
+- (P55-P69) [Binary Trees](./binary-trees/README.md)
 - (TBD) Multiway Trees
 - (TBD) Graphs
 - (TBD) Miscellaneous Problems

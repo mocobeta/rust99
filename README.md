@@ -12,7 +12,7 @@ The purpose of this problem collection is to give you the opportunity to practic
 
 The problems have different levels of difficulty. Those marked with a single asterisk (\*) are easy. If you have successfully solved the preceeding problems you should be able to solve them within a few (say 15) minutes. Problems marked with two asterisks (\*\*) are of intermediate difficulty. If you are a skilled Rust programmer it shouldn't take you more than 30-90 minutes to solve them. Problems marked with three asterisks (\*\*\*) are more difficult. You may need more time (i.e. a few hours or more) to find a good solution. The difficulties were all assigned for the Prolog problems, but the Rust versions seem to be of roughly similar difficulty.
 
-For some problems solutions are available via the link at the beginning of the problem description. Each solution is an independent lib crate with unit tests and examples so you can compile and execute them by `cargo build`, `cargo test` and `cargo run --example <filename>` command.
+For most (but not all) problems solutions are available via the link at the beginning of the problem description. Each solution is an independent lib crate with unit tests and examples so you can compile and execute them by `cargo build`, `cargo test` and `cargo run --example <filename>` command.
 
 Though I am careful about doing this stuff, there may be bugs as a software product. Also, provided problem setups or solutions here would not be the best ones in terms of efficiency and elegancy. Feedback is appreciated. 
 

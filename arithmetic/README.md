@@ -78,6 +78,28 @@ P34 $ cargo run -q --example totient
 
 Construct a flat list containing the prime factors in ascending order.
 
+Hint: You could define `PrimeIterator` struct and implement [Iterator trait](https://doc.rust-lang.org/std/iter/trait.Iterator.html) for that to iterate prime numbers.
+
+```rust
+pub struct PrimeIterator {
+    primes: Primes,
+    next: u32,
+}
+
+impl Iterator for PrimeIterator {
+    type Item = u32;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let res = self.next;
+        self.next += 1;
+        while !self.primes.is_prime(self.next) {
+            self.next += 1;
+        }
+        Some(res)
+    }
+}
+```
+
 Example: [examples/prime_factors.rs](./P35/examples/prime_factors.rs)
 ```rust
 println!("{:?}", prime_factors(315));
@@ -104,11 +126,11 @@ P36 $ cargo run -q --example prime_factor_mult
 
 ### [P37](./P37/src/lib.rs) (**) Calculate Euler's totient function phi(m) (improved).
 
-See problem P34 for the definition of Euler's totient function. If the list of the prime factors of a number m is known in the form of problem P36 then the function phi(m>) can be efficiently calculated as follows: Let [[p1, m1], [p2, m2], [p3, m3], ...] be the list of prime factors (and their multiplicities) of a given number m. Then phi(m) can be calculated with the following formula: 
+See problem P34 for the definition of Euler's totient function. If the list of the prime factors of a number m is known in the form of problem P36 then the function phi(m) can be efficiently calculated as follows: Let [[p1, m1], [p2, m2], [p3, m3], ...] be the list of prime factors (and their multiplicities) of a given number m. Then phi(m) can be calculated with the following formula:
 
 phi(m) = (p1-1)\*p1^(m1-1) \* (p2-1)\*p2^(m2-1) \* (p3-1)\*p3^(m3-1) \* ...
 
-Note that a^b stands for the _b_th power of a.
+Note that _a_ ^ _b_ stands for the _b_ th power of _a_.
 
 Example: [examples/totient.rs](./P37/examples/totient.rs)
 ```rust

@@ -60,10 +60,10 @@ mod tests {
     #[test]
     fn test_is_prime() {
         let mut primes = Primes::new();
-        assert_eq!(primes.is_prime(53), true);
-        assert_eq!(primes.is_prime(1957), false);
         assert_eq!(primes.is_prime(1), false);
         assert_eq!(primes.is_prime(2), true);
         assert_eq!(primes.is_prime(3), true);
+        assert_eq!(primes.is_prime(53), true);
+        assert_eq!(primes.is_prime(1957), false);
     }
 }

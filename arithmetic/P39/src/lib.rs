@@ -1,10 +1,9 @@
 use P35::PrimeIterator;
 
 pub fn list_primes_in_range(lower: u32, upper: u32) -> Vec<u32> {
-    let piter = PrimeIterator::new();
-    piter
-        .skip_while(|p| p < &lower)
-        .take_while(|p| p <= &upper)
+    PrimeIterator::new()
+        .skip_while(|&p| p < lower)
+        .take_while(|&p| p <= upper)
         .collect()
 }
 

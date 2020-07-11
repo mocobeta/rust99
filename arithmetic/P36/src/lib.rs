@@ -1,20 +1,22 @@
-use std::collections::HashMap;
-use P35::prime_factors;
+use P35::PrimeIterator;
 
 pub fn prime_factor_multiplicity(n: u32) -> Vec<(u32, u32)> {
-    // create factor -> multiplicity map
-    let mut factors: Vec<(u32, u32)> = prime_factors(n)
-        .iter()
-        .fold(HashMap::<u32, u32>::new(), |mut map, x| {
-            let e = map.entry(*x).or_insert(0);
-            *e += 1;
-            map
-        })
-        .iter()
-        .map(|(k, v)| (*k, *v))
-        .collect();
-    // sort factors by ascending order
-    factors.sort_by(|a, b| a.0.cmp(&b.0));
+    let piter = PrimeIterator::new();
+    let mut factors = vec![];
+    let mut r = n;
+    for prime in piter {
+        if r == 1 {
+            break;
+        }
+        let mut c = 0;
+        while r % prime == 0 {
+            c += 1;
+            r = r / prime;
+        }
+        if c > 0 {
+            factors.push((prime, c));
+        }
+    }
     factors
 }
 

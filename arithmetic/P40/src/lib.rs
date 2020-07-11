@@ -1,11 +1,12 @@
 use P39::list_primes_in_range;
 
 pub fn goldbach(n: u32) -> (u32, u32) {
-    if n <= 2 || n % 2 != 0 {
-        panic!("{} is not an even number greater than 2")
-    }
+    assert!(
+        n > 2 && n % 2 == 0,
+        "{} is not an even number greater than 2"
+    );
     let primes = list_primes_in_range(1, n);
-    match primes.iter().find(|&&p| primes.contains(&(n - p))) {
+    match primes.iter().find(|&p| primes.contains(&(n - p))) {
         Some(p) => (*p, n - *p),
         None => panic!("it breaks Goldbach's conjecture: {}", n),
     }

@@ -6,8 +6,7 @@ pub fn random_select<T: Copy>(n: usize, li: &Vec<T>) -> Vec<T> {
     let mut tmp = li.clone();
     for _i in 0..n {
         let idx = rng.gen_range(0, tmp.len());
-        res.push(*tmp.get(idx).unwrap());
-        tmp.remove(idx);
+        res.push(tmp.remove(idx));
     }
     res
 }

@@ -1,7 +1,6 @@
 pub fn split<T: Copy>(n: usize, li: &Vec<T>) -> (Vec<T>, Vec<T>) {
-    let mut left = li.clone();
-    let right = left.split_off(n);
-    (left, right)
+    let (left, right) = li.split_at(n);
+    (left.to_vec(), right.to_vec())
 }
 
 #[cfg(test)]

@@ -1,9 +1,9 @@
 pub fn duplicate<T: Copy>(li: &Vec<T>) -> Vec<T> {
     let mut res = vec![];
-    li.clone().into_iter().for_each(|elem| {
-        res.push(elem);
-        res.push(elem);
-    });
+    for elem in li {
+        res.push(*elem);
+        res.push(*elem);
+    }
     res
 }
 

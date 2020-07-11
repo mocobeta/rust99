@@ -3,13 +3,11 @@ pub fn compress<T: Copy + PartialEq>(li: &Vec<T>) -> Vec<T> {
         vec![]
     } else {
         let mut res = vec![li[0]];
-        let mut prev = li[0];
-        li.clone().into_iter().skip(1).for_each(|item| {
-            if item != prev {
-                res.push(item);
-                prev = item;
+        for i in 1..li.len() {
+            if li.get(i) != res.last() {
+                res.push(*li.get(i).unwrap());
             }
-        });
+        }
         res
     }
 }

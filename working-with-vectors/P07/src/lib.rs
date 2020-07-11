@@ -21,22 +21,18 @@ pub mod utils {
 }
 
 pub fn flatten<T: Copy>(li: &List<T>) -> List<T> {
-    utils::list(_flatten_list(li))
-}
-
-fn _flatten_list<T: Copy>(li: &List<T>) -> Vec<ListItem<T>> {
-    let mut items = vec![];
-    for item in li.0.iter() {
-        items.extend(_flatten_item(item));
+    fn flatten_list<T: Copy>(li: &List<T>) -> Vec<ListItem<T>> {
+        li.0.iter().flat_map(|item| flatten_item(item)).collect()
     }
-    items
-}
 
-fn _flatten_item<T: Copy>(item: &ListItem<T>) -> Vec<ListItem<T>> {
-    match item {
-        ListItem::Item(v) => vec![ListItem::Item(*v)],
-        ListItem::NestedItem(boxed_li) => _flatten_list(boxed_li.as_ref()),
+    fn flatten_item<T: Copy>(item: &ListItem<T>) -> Vec<ListItem<T>> {
+        match item {
+            ListItem::Item(v) => vec![ListItem::Item(*v)],
+            ListItem::NestedItem(boxed_li) => flatten_list(boxed_li.as_ref()),
+        }
     }
+
+    utils::list(flatten_list(li))
 }
 
 #[cfg(test)]

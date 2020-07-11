@@ -40,4 +40,10 @@ mod tests {
         let li = Vec::<usize>::new();
         assert_eq!(is_palindrome(&li), true);
     }
+
+    #[test]
+    fn test_one_elemens() {
+        let li = vec![1];
+        assert_eq!(is_palindrome(&li), true);
+    }
 }

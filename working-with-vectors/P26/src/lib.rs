@@ -1,27 +1,27 @@
-pub fn combinations<T: Copy>(k: usize, li: &Vec<T>) -> Vec<Vec<T>> {
-    comb_rec(k, &li, &vec![])
-}
-
-fn comb_rec<T: Copy>(k: usize, rem: &Vec<T>, acc: &Vec<T>) -> Vec<Vec<T>> {
-    if k == 1 {
-        rem.into_iter()
-            .map(|&x| {
+pub fn combinations<T: Copy>(k: usize, li: &[T]) -> Vec<Vec<T>> {
+    fn comb_rec<T: Copy>(k: usize, rem: &[T], acc: &Vec<T>) -> Vec<Vec<T>> {
+        if k == 1 {
+            rem.into_iter()
+                .map(|&x| {
+                    let mut acc2 = acc.clone();
+                    acc2.push(x);
+                    acc2
+                })
+                .collect()
+        } else {
+            let mut res = vec![];
+            for i in 0..(rem.len() - k + 1) {
+                let (left, right) = rem.split_at(i + 1);
+                let x = left[left.len() - 1];
                 let mut acc2 = acc.clone();
                 acc2.push(x);
-                acc2
-            })
-            .collect()
-    } else {
-        let mut res = vec![];
-        for i in 0..(rem.len() - k + 1) {
-            let mut rem2: Vec<T> = rem.clone().into_iter().skip(i).collect();
-            let x = rem2.remove(0);
-            let mut acc2 = acc.clone();
-            acc2.push(x);
-            res.extend(comb_rec(k - 1, &rem2, &acc2));
+                res.extend(comb_rec(k - 1, &right, &acc2));
+            }
+            res
         }
-        res
     }
+
+    comb_rec(k, &li, &vec![])
 }
 
 #[cfg(test)]

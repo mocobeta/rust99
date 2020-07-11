@@ -3,17 +3,14 @@ pub fn pack<T: Copy + PartialEq>(li: &Vec<T>) -> Vec<Vec<T>> {
         vec![]
     } else {
         let mut res = vec![vec![li[0]]];
-        let mut prev = li[0];
-        li.clone().into_iter().skip(1).for_each(|item| {
-            if item == prev {
-                if let Some(x) = res.last_mut() {
-                    (*x).push(item);
-                }
+        for i in 1..li.len() {
+            let item = li[i];
+            if item == *res.last().unwrap().last().unwrap() {
+                res.last_mut().unwrap().push(item);
             } else {
                 res.push(vec![item]);
-                prev = item;
             }
-        });
+        }
         res
     }
 }

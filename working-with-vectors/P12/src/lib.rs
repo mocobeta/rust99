@@ -1,10 +1,10 @@
 pub fn decode<T: Copy>(li: &Vec<(usize, T)>) -> Vec<T> {
     let mut res = vec![];
-    li.iter().for_each(|x| {
-        for _n in 0..x.0 {
-            res.push(x.1);
+    for (n, elem) in li {
+        for _i in 0..*n {
+            res.push(*elem)
         }
-    });
+    }
     res
 }
 

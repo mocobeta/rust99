@@ -2,11 +2,11 @@
 
 use P26::combinations;
 
-pub fn group3<T: Copy + PartialEq>(li: &Vec<T>) -> Vec<Vec<Vec<T>>> {
+pub fn group3<T: Copy + PartialEq>(li: &[T]) -> Vec<Vec<Vec<T>>> {
     let mut all_groups = vec![];
     let combs1 = combinations(2, li);
     for comb1 in combs1 {
-        let li_sub = subtract(li, &comb1);
+        let li_sub = subtract(&li, &comb1);
         let combs2 = combinations(3, &li_sub);
         for comb2 in combs2 {
             let comb3 = subtract(&li_sub, &comb2);
@@ -20,39 +20,39 @@ pub fn group3<T: Copy + PartialEq>(li: &Vec<T>) -> Vec<Vec<Vec<T>>> {
     all_groups
 }
 
-pub fn group<T: Copy + PartialEq>(sizes: &[usize], li: &Vec<T>) -> Vec<Vec<Vec<T>>> {
+pub fn group<T: Copy + PartialEq>(sizes: &[usize], li: &[T]) -> Vec<Vec<Vec<T>>> {
+    fn group_rec<T: Copy + PartialEq>(
+        sizes: &[usize],
+        rem: &[T],
+        acc: &Vec<Vec<T>>,
+    ) -> Vec<Vec<Vec<T>>> {
+        if sizes.len() == 1 {
+            if sizes[0] != rem.len() {
+                panic!("incompatible size: {}; remainder={}", sizes[0], rem.len());
+            }
+            let mut acc2 = acc.clone();
+            acc2.push(rem.to_vec());
+            vec![acc2]
+        } else {
+            let mut groups = vec![];
+            let combs = combinations(sizes[0], rem);
+            for comb in combs {
+                let mut acc2 = acc.clone();
+                acc2.push(comb.clone());
+                groups.extend(group_rec(&sizes[1..], &subtract(rem, &comb), &acc2));
+            }
+            groups
+        }
+    }
+
     group_rec(sizes, li, &vec![])
 }
 
-fn group_rec<T: Copy + PartialEq>(
-    sizes: &[usize],
-    rem: &Vec<T>,
-    acc: &Vec<Vec<T>>,
-) -> Vec<Vec<Vec<T>>> {
-    if sizes.len() == 1 {
-        if sizes[0] != rem.len() {
-            panic!("incompatible size: {}; remainder={}", sizes[0], rem.len());
-        }
-        let mut acc2 = acc.clone();
-        acc2.push(rem.clone());
-        vec![acc2]
-    } else {
-        let mut groups = vec![];
-        let combs = combinations(sizes[0], rem);
-        for comb in combs {
-            let mut acc2 = acc.clone();
-            acc2.push(comb.clone());
-            let rem2 = subtract(rem, &comb);
-            groups.extend(group_rec(&sizes[1..], &rem2, &acc2));
-        }
-        groups
-    }
-}
-
-fn subtract<T: Copy + PartialEq>(li: &Vec<T>, sub: &Vec<T>) -> Vec<T> {
-    let mut diff = li.clone();
+fn subtract<T: Copy + PartialEq>(li: &[T], sub: &Vec<T>) -> Vec<T> {
+    let mut diff = li.to_vec();
     for x in sub {
-        diff.remove_item(x);
+        let idx = diff.iter().position(|&r| r == *x).unwrap();
+        diff.remove(idx);
     }
     diff
 }

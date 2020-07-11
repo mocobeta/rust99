@@ -184,37 +184,7 @@ P10 $ cargo run -q --example encode
 
 ### [P11](./P11/src/lib.rs) (*) Modified run-length encoding.
 
-Modify the result of problem P10 in such a way that if an element has no duplicates it is simply copied into the result list. Only elements with duplicates are transferred as (N, E) terms.
-
-Problem Setup:
-```rust
-#[derive(PartialEq, Debug)]
-pub enum Item<T> {
-    Element(T),
-    Pair(usize, T),
-}
-
-pub mod utils {
-    use super::Item;
-    pub fn elem<T>(e: T) -> Item<T> {
-        Item::Element(e)
-    }
-    pub fn pair<T>(n: usize, e: T) -> Item<T> {
-        Item::Pair(n, e)
-    }
-}
-```
-
-Example: [examples/encode_modified.rs](./P11/examples/encode_modified.rs)
-```rust
-let li = vec!['a', 'a', 'a', 'a', 'b', 'c', 'c', 'a', 'a', 'd', 'e', 'e', 'e', 'e'];
-println!("{:?}", encode_modified(&li));
-```
-
-```bash
-P11 $ cargo run -q --example encode_modified
-[Pair(4, 'a'), Element('b'), Pair(2, 'c'), Pair(2, 'a'), Element('d'), Pair(4, 'e')]
-```
+Omitted;
 
 ### [P12](./P12/src/lib.rs) (**) Decode a run-length encoded list.
 
@@ -302,7 +272,7 @@ P17 $ cargo run -q --example split
 
 ### [P18](./P18/src/lib.rs) (**) Extract a slice from a list.
 
-Given two indices, I and K, the slice is the list containing the elements from and including the Ith element up to but not including the Kth element of the original list. Start counting the elements with 0. 
+Given two indices, _I_ and _K_, the slice is the list containing the elements from and including the _I_ th element up to but not including the _K_ th element of the original list. Start counting the elements with 0. 
 
 Example: [examples/slice.rs](./P18/examples/slice.rs)
 ```rust

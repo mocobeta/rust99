@@ -3,18 +3,18 @@ pub fn encode_direct<T: Copy + PartialEq>(li: &Vec<T>) -> Vec<(usize, T)> {
         vec![]
     } else {
         let mut res = vec![];
-        let mut prev = li[0];
-        let mut cnt = 1;
-        li.clone().into_iter().skip(1).for_each(|e| {
-            if e != prev {
-                res.push((cnt, prev));
-                prev = e;
-                cnt = 1;
-            } else {
-                cnt += 1;
+        let mut i = 0usize;
+        while i < li.len() {
+            let mut j = i;
+            while j < li.len() {
+                j += 1;
+                if j == li.len() || li[i] != li[j] {
+                    res.push((j - i, li[i]));
+                    i = j;
+                    break;
+                }
             }
-        });
-        res.push((cnt, prev));
+        }
         res
     }
 }

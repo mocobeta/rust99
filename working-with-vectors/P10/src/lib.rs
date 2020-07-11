@@ -1,7 +1,7 @@
 use P09;
 
 pub fn encode<T: Copy + PartialEq>(li: &Vec<T>) -> Vec<(usize, T)> {
-    P09::pack(li).into_iter().map(|x| (x.len(), x[0])).collect()
+    P09::pack(li).iter().map(|x| (x.len(), x[0])).collect()
 }
 
 #[cfg(test)]

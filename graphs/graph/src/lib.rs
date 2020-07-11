@@ -50,6 +50,11 @@ where
         adjs
     }
 
+    /// Returns the degree of this node (num of adjacent nodes)
+    pub fn degree(&self) -> usize {
+        self.adjacents().len()
+    }
+
     fn add_edge(&mut self, adj: Weak<Edge<T, U>>) {
         self.edges.push(adj);
     }
@@ -137,6 +142,17 @@ where
         self.nodes.iter().map(|(_, n)| n.borrow()).collect()
     }
 
+    /// Returns list of all nodes sorted according to decreasing (or increasing) degree.
+    pub fn get_nodes_by_degree(&self, desc: bool) -> Vec<Ref<Node<T, U>>> {
+        let mut nodes = self.get_nodes();
+        if desc {
+            nodes.sort_by(|a, b| b.degree().cmp(&a.degree()));
+        } else {
+            nodes.sort_by(|a, b| a.degree().cmp(&b.degree()));
+        }
+        nodes
+    }
+
     /// Adds a node to this graph.
     pub fn add_node(&mut self, v: T) {
         let node = Node {
@@ -165,6 +181,39 @@ where
             .add_edge(Rc::downgrade(self.edges.last().unwrap()));
         n2.borrow_mut()
             .add_edge(Rc::downgrade(self.edges.last().unwrap()));
+    }
+}
+
+impl<T, U> PartialEq for LabeledGraph<T, U>
+where
+    T: Hash + Copy + Eq,
+    U: Copy + Eq,
+{
+    fn eq(&self, other: &LabeledGraph<T, U>) -> bool {
+        if self.size() != other.size() {
+            return false;
+        }
+        for my_node in self.get_nodes() {
+            if let None = other.get_node(my_node.get_value()) {
+                return false;
+            }
+            let my_adjs: Vec<(T, Option<U>)> = my_node.adjacents_with_label().into_iter().collect();
+            let other_adjs: Vec<(T, Option<U>)> = other
+                .get_node(my_node.get_value())
+                .unwrap()
+                .adjacents_with_label()
+                .into_iter()
+                .collect();
+            if my_adjs.len() != other_adjs.len() {
+                return false;
+            }
+            for adj in my_adjs {
+                if !other_adjs.contains(&adj) {
+                    return false;
+                }
+            }
+        }
+        true
     }
 }
 
@@ -365,5 +414,43 @@ mod tests {
         );
         assert_eq!(n2.adjacents_with_label(), vec![('c', Some(1))]);
         assert_eq!(n3.adjacents_with_label(), vec![('a', Some(3))]);
+    }
+
+    #[test]
+    fn test_degree() {
+        let mut g = Graph::<char>::new();
+        g.add_node('a');
+        g.add_node('b');
+        g.add_node('c');
+        g.add_node('d');
+        g.add_edge('a', 'b');
+        g.add_edge('b', 'c');
+        g.add_edge('a', 'c');
+        g.add_edge('a', 'd');
+
+        assert_eq!(g.get_node(&'a').unwrap().degree(), 3);
+    }
+
+    #[test]
+    fn test_nodes_by_degree() {
+        let mut g = Graph::<char>::new();
+        g.add_node('a');
+        g.add_node('b');
+        g.add_node('c');
+        g.add_node('d');
+        g.add_edge('a', 'b');
+        g.add_edge('b', 'c');
+        g.add_edge('a', 'c');
+        g.add_edge('a', 'd');
+
+        let nodes = g.get_nodes_by_degree(true);
+        assert_eq!(nodes.get(0).unwrap().get_value(), &'a');
+        assert!(
+            nodes.get(1).unwrap().get_value() == &'b' || nodes.get(1).unwrap().get_value() == &'c'
+        );
+        assert!(
+            nodes.get(2).unwrap().get_value() == &'b' || nodes.get(2).unwrap().get_value() == &'c'
+        );
+        assert_eq!(nodes.get(3).unwrap().get_value(), &'d');
     }
 }

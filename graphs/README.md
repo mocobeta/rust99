@@ -156,6 +156,8 @@ Full definition of the graphs are available at [here](./graph/src/lib.rs).
 
 Write functions to convert between the different graph representations. With these functions, all representations are equivalent; i.e. for the following problems you can always pick freely the most convenient form. The reason this problem is rated (***) is not because it's particularly difficult, but because it's a lot of work to deal with all the special cases.
 
+For simplicity, we shall assume the type of node value is `char` and the type of edge label is `i32`.
+
 Hint: You might need separate functions for labeled and unlabeled graphs.
 
 [**Undirected graph representations**](./P80/src/graph_converters.rs)
@@ -208,17 +210,202 @@ labeled digraph (adjacency-list form)
 [('m', [('q', 7)]), ('p', [('m', 5), ('q', 9)]), ('k', []), ('q', [])]
 ```
 
-### P81 (**) Path from one node to another one.
+### [P81](./P81/src/lib.rs) (**) Path from one node to another one.
 
-### P82 (*) Cycle from a given node.
+Write a function to find acyclic paths from one node to another in a graph. The method should return all paths. 
 
-### P83 (**) Construct all spanning trees.
+To handle multiple kinds of graph, we define `PathFinder` trait as follows. Implement `find_paths()` function for each graph (you may want to create common functions to avoid duplicating the logic).
 
-### P84 (**) Construct the minimal spanning tree.
+```rust
+pub trait PathFinder<T> {
+    fn find_paths(&self, start: char, end: char) -> Vec<Vec<T>>;
+}
 
-### P85 (**) Graph isomorphism.
+impl<U: Copy + Eq> PathFinder<char> for LabeledGraph<char, U> {
+    fn find_paths(&self, start: char, end: char) -> Vec<Vec<char>> {
+        todo!()
+    }
+}
 
-### P86 (**) Node degree and graph coloration.
+impl<U: Copy + Eq> PathFinder<char> for LabeledDigraph<char, U> {
+    fn find_paths(&self, start: char, end: char) -> Vec<Vec<char>> {
+        todo!()
+    }
+}
+```
+
+Example: [examples/find_paths.rs](./P81/examples/find_paths.rs)
+```rust
+let g = labeled::from_string("[p>q/9, m>q/7, k, p>m/5]");
+println!("Paths from p to q: {:?}", g.find_paths('p', 'q'));
+println!("Paths from p to k: {:?}", g.find_paths('p', 'k'));
+```
+
+```bash
+P81 $ cargo run -q --example find_paths
+Paths from p to q: [['p', 'q'], ['p', 'm', 'q']]
+Paths from p to k: []
+```
+
+### [P82](./P82/src/lib.rs) (*) Cycle from a given node.
+
+Write a function named to find closed paths (cycles) starting at a given node in a graph. The method should return all cycles.
+
+To handle multiple kinds of graph, we define `CycleFinder` trait as follows. Implement `find_cycles()` function for each graph.
+
+```rust
+pub trait CycleFinder<T> {
+    fn find_cycles(&self, node: char) -> Vec<Vec<char>>;
+}
+
+impl<U: Copy + Eq> CycleFinder<char> for LabeledGraph<char, U> {
+    fn find_cycles(&self, node: char) -> Vec<Vec<char>> {
+        todo!()
+    }
+}
+
+impl<U: Copy + Eq> CycleFinder<char> for LabeledDigraph<char, U> {
+    fn find_cycles(&self, node: char) -> Vec<Vec<char>> {
+        todo!()
+    }
+}
+```
+
+Example: [examples/find_cycles.rs](./P82/examples/find_cycles.rs)
+```rust
+let g = unlabeled::from_string("[b-c, f-c, g-h, d, f-b, k-f, h-g]");
+println!("Cycles starting at f: {:?}", g.find_cycles('f'));
+println!("Cycles starting at g: {:?}", g.find_cycles('g'));
+```
+
+```rust
+P82 $ cargo run -q --example find_cycles
+Cycles starting at f: [['f', 'b', 'c', 'f'], ['f', 'c', 'b', 'f']]
+Cycles starting at g: []
+```
+
+### [P83](./P83/src/lib.rs) (**) Construct all spanning trees.
+
+Write a function `spanning_trees()` to construct all spanning trees of a given graph. With this method, find out how many spanning trees there are for the graph below. The data of this example graph can be found below. When you have a correct solution for the spanningTrees method, use it to define two other useful methods: `is_tree()` and `is_connected()`. Both are five-minute tasks! 
+
+![](./images/p83.gif)
+
+Example: [examples/spanning_trees.rs](./P83/examples/spanning_trees.rs)
+```rust
+let g = unlabeled::from_term_form(
+    &vec!['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+    &vec![
+        ('a', 'b'), ('a', 'd'), ('b', 'c'), ('b', 'e'), ('c', 'e'),
+        ('d', 'e'), ('d', 'f'), ('d', 'g'), ('e', 'h'), ('f', 'g'), 
+        ('g', 'h'),
+    ],
+);
+let trees = spanning_trees(&g);
+for tree in trees {
+    println!("{:?}", unlabeled::to_term_form(&tree));
+}
+```
+
+```bash
+P83 $ cargo run -q --example spanning_trees
+(['h', 'b', 'a', 'd', 'e', 'c', 'f', 'g'], [('g', 'h'), ('f', 'g'), ('d', 'e'), ('c', 'e'), ('d', 'f'), ('b', 'c'), ('a', 'b')])
+(['h', 'f', 'a', 'c', 'd', 'g', 'e', 'b'], [('a', 'd'), ('f', 'g'), ('g', 'h'), ('c', 'e'), ('d', 'e'), ('d', 'f'), ('b', 'c')])
+(['a', 'd', 'f', 'b', 'g', 'h', 'c', 'e'], [('c', 'e'), ('d', 'f'), ('f', 'g'), ('g', 'h'), ('a', 'b'), ('d', 'e'), ('b', 'e')])
+(['g', 'a', 'd', 'f', 'b', 'e', 'h', 'c'], [('c', 'e'), ('g', 'h'), ('d', 'f'), ('d', 'e'), ('a', 'd'), ('f', 'g'), ('b', 'e')])
+......
+```
+
+### [P84](./P84/src/lib.rs) (**) Construct the minimal spanning tree.
+
+Write a method `minimal_spanning_tree` to construct the minimal spanning tree of a given labeled graph. Hint: Use Prim's Algorithm. A small modification of the solution of P83 does the trick. The data of the example graph can be found below.
+
+![](./images/p84.gif)
+
+Example: [examples/minimal_spanning_trees.rs](./P84/examples/minimal_spanning_trees.rs)
+```rust
+    let g = labeled::from_term_form(
+        &vec!['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+        &vec![
+            ('a', 'b', 5), ('a', 'd', 3), ('b', 'c', 2), ('b', 'e', 4), ('c', 'e', 6),
+            ('d', 'e', 7), ('d', 'f', 4), ('d', 'g', 3), ('e', 'h', 5), ('f', 'g', 4),
+            ('g', 'h', 1),
+        ],
+    );
+    let trees = P84::minimal_spanning_trees(&g);
+    for tree in trees {
+        println!("{:?} (weight={})", labeled::to_term_form(&tree), label_sum(&tree));
+    }
+```
+
+```bash
+P84 $ cargo run -q --example minimal_spanning_trees
+(['c', 'f', 'h', 'e', 'd', 'g', 'a', 'b'], [('b', 'c', 2), ('g', 'h', 1), ('b', 'e', 4), ('d', 'g', 3), ('a', 'd', 3), ('e', 'h', 5), ('f', 'g', 4)]) (weight=22)
+(['f', 'd', 'g', 'c', 'e', 'a', 'b', 'h'], [('b', 'e', 4), ('d', 'f', 4), ('a', 'b', 5), ('a', 'd', 3), ('g', 'h', 1), ('d', 'g', 3), ('b', 'c', 2)]) (weight=22)
+```
+
+### [P85](./P85/src/lib.rs) (**) Graph isomorphism.
+
+Two graphs G1(N1,E1) and G2(N2,E2) are isomorphic if there is a bijection f: N1 → N2 such that for any nodes X,Y of N1, X and Y are adjacent if and only if f(X) and f(Y) are adjacent.
+
+Write a function that determines whether two graphs are isomorphic.
+
+Example: [examples/is_isomorphic_to.rs](./P85/examples/is_isomorphic_to.rs)
+```rs
+let g1 = unlabeled::from_string("[a-b]");
+let g2 = unlabeled::from_string("[5-7]");
+println!(
+    "{:?} is isomorphic to {:?}: {}",
+    unlabeled::to_term_form(&g1),
+    unlabeled::to_term_form(&g2),
+    is_isomorphic_to(&g1, &g2)
+);
+```
+
+```bash
+P85 $ cargo run -q --example is_isomorphic_to
+(['b', 'a'], [('a', 'b')]) is isomorphic to (['7', '5'], [('5', '7')]): true
+```
+
+### [P86](./P86/src/lib.rs) (**) Node degree and graph coloration.
+
+a) Write a method `degree()` for Node that determines the degree of a given node.
+
+Example: [examples/degree.rs](./P86/examples/degree.rs)
+```rs
+let g = unlabeled::from_string("[a-b, b-c, a-c, a-d]");
+println!("degree of node 'a' = {}", g.get_node(&'a').unwrap().degree());
+```
+
+```bash
+P86 $ cargo run -q --example degree
+degree of node 'a' = 3
+```
+
+b) Write a method for Graph that lists all nodes of a graph sorted according to ascending or decreasing degree.
+
+Example: [examples/nodes_by_degree.rs](./P86/examples/nodes_by_degree.rs)
+```rs
+let g = unlabeled::from_string("[a-b, b-c, a-c, a-d]");
+println!("{:?}", g.get_nodes_by_degree(true));
+```
+
+```bash
+P86 $ cargo run -q --example nodes_by_degree
+[Node { value: 'a', edges: [(Weak), (Weak), (Weak)] }, Node { value: 'b', edges: [(Weak), (Weak)] }, Node { value: 'c', edges: [(Weak), (Weak)] }, Node { value: 'd', edges: [(Weak)] }]
+```
+
+c) Use Welsh-Powell's algorithm to paint the nodes of a graph in such a way that adjacent nodes have different colors. Make a function `color_nodes()` that returns a list of tuples, each of which contains a node value and an integer representing its color.
+
+Example: [examples/color_nodes.rs](./P86/examples/color_nodes.rs)
+```rs
+let g = unlabeled::from_string("[a-b, b-c, a-c, a-d]");
+println!("{:?}", color_nodes(&g));
+```
+
+```bash
+P86 $ cargo run -q --example color_nodes
+[('a', 1), ('b', 2), ('d', 2), ('c', 3)]
+```
 
 ### P87 (**) Depth-first order graph traversal.
 

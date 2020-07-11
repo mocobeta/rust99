@@ -14,7 +14,7 @@ The problems have different levels of difficulty. Those marked with a single ast
 
 For most (but not all) problems solutions are available via the link at the beginning of the problem description. Each solution is an independent lib crate with unit tests and examples so you can compile and execute them by `cargo build`, `cargo test` and `cargo run --example <filename>` command.
 
-Though I am careful about doing this stuff, there may be bugs as a software product. Also, provided problem setups or solutions here would not be the best ones in terms of efficiency and elegancy. Feedback is appreciated. 
+Although I am careful about doing this stuff, there may be bugs as a software product. Also, provided problem setups or solutions here would not be the best ones in terms of efficiency and elegancy. Feedback is appreciated. 
 
 ## The Rust Toolchain version currently used
 
@@ -29,7 +29,7 @@ The collection consists of a few sections; let's exlore them from the following 
 - (P46-P50) [Logic and Codes](./logic-and-codes/README.md)
 - (P55-P69) [Binary Trees](./binary-trees/README.md)
 - (P70-P73) [Multiway Trees](./multiway-trees/README.md)
-- (TBD) Graphs
+- (P80-P89) [Graphs](./graphs/README.md)
 - (TBD) Miscellaneous Problems
 
 

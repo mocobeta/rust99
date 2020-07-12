@@ -2,6 +2,26 @@ use bintree::Tree;
 use std::fmt;
 
 pub fn is_symmetric<T: fmt::Display>(tree: &Tree<T>) -> bool {
+    fn is_mirror_of<T: fmt::Display>(t1: &Tree<T>, t2: &Tree<T>) -> bool {
+        match (t1, t2) {
+            (Tree::End, Tree::End) => true,
+            (Tree::End, Tree::Node { .. }) => false,
+            (Tree::Node { .. }, Tree::End) => false,
+            (
+                Tree::Node {
+                    value: _,
+                    left: lleft,
+                    right: lright,
+                },
+                Tree::Node {
+                    value: _,
+                    left: rleft,
+                    right: rright,
+                },
+            ) => is_mirror_of(lleft, rright) && is_mirror_of(lright, rleft),
+        }
+    }
+
     match tree {
         Tree::Node {
             value: _,
@@ -9,26 +29,6 @@ pub fn is_symmetric<T: fmt::Display>(tree: &Tree<T>) -> bool {
             right,
         } => is_mirror_of(left, right),
         Tree::End => true,
-    }
-}
-
-fn is_mirror_of<T: fmt::Display>(t1: &Tree<T>, t2: &Tree<T>) -> bool {
-    match (t1, t2) {
-        (Tree::End, Tree::End) => true,
-        (Tree::End, Tree::Node { .. }) => false,
-        (Tree::Node { .. }, Tree::End) => false,
-        (
-            Tree::Node {
-                value: _,
-                left: lleft,
-                right: lright,
-            },
-            Tree::Node {
-                value: _,
-                left: rleft,
-                right: rright,
-            },
-        ) => is_mirror_of(lleft, rright) && is_mirror_of(lright, rleft),
     }
 }
 

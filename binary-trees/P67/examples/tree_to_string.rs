@@ -1,4 +1,4 @@
-use P67::*;
+use bintree_strrepr::Tree;
 
 pub fn main() {
     let tree = Tree::node(

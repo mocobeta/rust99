@@ -7,8 +7,8 @@ pub enum PositionedTree<T: fmt::Display> {
         value: T,
         left: Box<PositionedTree<T>>,
         right: Box<PositionedTree<T>>,
-        x: i32,
-        y: i32,
+        x: u32,
+        y: u32,
     },
     End,
 }
@@ -17,10 +17,10 @@ impl<T: fmt::Display> PositionedTree<T> {
     pub fn end() -> Self {
         PositionedTree::End
     }
-    pub fn leaf(v: T, x: i32, y: i32) -> Self {
+    pub fn leaf(v: T, x: u32, y: u32) -> Self {
         PositionedTree::node(v, PositionedTree::End, PositionedTree::End, x, y)
     }
-    pub fn node(v: T, left: PositionedTree<T>, right: PositionedTree<T>, x: i32, y: i32) -> Self {
+    pub fn node(v: T, left: PositionedTree<T>, right: PositionedTree<T>, x: u32, y: u32) -> Self {
         PositionedTree::Node {
             value: v,
             left: Box::new(left),
@@ -29,7 +29,7 @@ impl<T: fmt::Display> PositionedTree<T> {
             y: y,
         }
     }
-    pub fn get_x(&self) -> Option<i32> {
+    pub fn get_x(&self) -> Option<u32> {
         match self {
             PositionedTree::Node {
                 value: _,
@@ -41,7 +41,7 @@ impl<T: fmt::Display> PositionedTree<T> {
             PositionedTree::End => None,
         }
     }
-    pub fn get_y(&self) -> Option<i32> {
+    pub fn get_y(&self) -> Option<u32> {
         match self {
             PositionedTree::Node {
                 value: _,

@@ -6,30 +6,28 @@ pub fn cbal_trees<T: Copy + fmt::Display>(n: usize, v: T) -> Vec<Tree<T>> {
         vec![Tree::end()]
     } else if (n - 1) % 2 == 0 {
         let subtrees = cbal_trees((n - 1) / 2, v);
-        let res: Vec<Tree<T>> = subtrees
+        subtrees
             .iter()
             .flat_map(|s1| {
                 subtrees
                     .iter()
-                    .map(move |s2| Tree::node(v, s1.clone(), s2.clone()))
+                    .map(move |s2| Tree::node(v, s1.clone(), s2.clone())) // left and right child has an equal number of nodes
             })
-            .collect();
-        res
+            .collect()
     } else {
         let subtrees1 = cbal_trees((n - 1) / 2, v);
         let subtrees2 = cbal_trees((n - 1) / 2 + 1, v);
-        let res: Vec<Tree<T>> = subtrees1
+        subtrees1
             .iter()
             .flat_map(|s1| {
                 subtrees2.iter().flat_map(move |s2| {
                     vec![
-                        Tree::node(v, s1.clone(), s2.clone()),
-                        Tree::node(v, s2.clone(), s1.clone()),
+                        Tree::node(v, s1.clone(), s2.clone()), // right child has one more node than left child
+                        Tree::node(v, s2.clone(), s1.clone()), // left child has one more node than right child
                     ]
                 })
             })
-            .collect();
-        res
+            .collect()
     }
 }
 

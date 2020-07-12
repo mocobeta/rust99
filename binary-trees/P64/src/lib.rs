@@ -3,45 +3,49 @@ use bintree_pos::PositionedTree;
 use std::fmt;
 
 pub fn layout_bintree<T: Copy + fmt::Display>(tree: &Tree<T>) -> PositionedTree<T> {
-    layout_rec(tree, 1, 1)
-}
-
-fn layout_rec<T: Copy + fmt::Display>(node: &Tree<T>, ord: i32, depth: i32) -> PositionedTree<T> {
-    match node {
-        Tree::Node { value, left, right } => {
-            // create left tree
-            let left_child = layout_rec(left.as_ref(), ord, depth + 1);
-            // calculate my ord
-            let my_ord = if let PositionedTree::Node {
-                value: _,
-                left: _,
-                right,
-                x: left_child_ord,
-                y: _,
-            } = &left_child
-            {
-                if let PositionedTree::Node {
+    fn layout_rec<T: Copy + fmt::Display>(
+        node: &Tree<T>,
+        ord: u32,
+        depth: u32,
+    ) -> PositionedTree<T> {
+        match node {
+            Tree::Node { value, left, right } => {
+                // creates left positioned tree
+                let left_child = layout_rec(left, ord, depth + 1);
+                // calculates ord of current node
+                let my_ord = if let PositionedTree::Node {
                     value: _,
                     left: _,
-                    right: _,
-                    x: left_grandchild_ord,
+                    right,
+                    x: left_child_ord,
                     y: _,
-                } = right.as_ref()
+                } = &left_child
                 {
-                    left_grandchild_ord + 1
+                    if let PositionedTree::Node {
+                        value: _,
+                        left: _,
+                        right: _,
+                        x: left_grandchild_ord,
+                        y: _,
+                    } = right.as_ref()
+                    {
+                        left_grandchild_ord + 1
+                    } else {
+                        left_child_ord + 1
+                    }
                 } else {
-                    left_child_ord + 1
-                }
-            } else {
-                ord
-            };
-            // create right child
-            let right_child = layout_rec(right.as_ref(), my_ord + 1, depth + 1);
+                    ord
+                };
+                // creates right positioned tree
+                let right_child = layout_rec(right.as_ref(), my_ord + 1, depth + 1);
 
-            PositionedTree::node(*value, left_child, right_child, my_ord, depth)
+                PositionedTree::node(*value, left_child, right_child, my_ord, depth)
+            }
+            Tree::End => PositionedTree::end(),
         }
-        Tree::End => PositionedTree::end(),
     }
+
+    layout_rec(tree, 1, 1)
 }
 
 #[cfg(test)]

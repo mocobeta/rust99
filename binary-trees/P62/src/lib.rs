@@ -4,23 +4,13 @@ use std::fmt;
 pub fn internal_list<T: Copy + fmt::Display>(tree: &Tree<T>) -> Vec<T> {
     match tree {
         Tree::Node { value, left, right } => match (left.as_ref(), right.as_ref()) {
-            (Tree::Node { .. }, Tree::Node { .. }) => {
-                let mut leaves = vec![*value];
-                leaves.extend_from_slice(&internal_list(left));
-                leaves.extend_from_slice(&internal_list(right));
-                leaves
-            }
-            (Tree::Node { .. }, Tree::End) => {
-                let mut leaves = vec![*value];
-                leaves.extend_from_slice(&internal_list(left));
-                leaves
-            }
-            (Tree::End, Tree::Node { .. }) => {
-                let mut leaves = vec![*value];
-                leaves.extend_from_slice(&internal_list(right));
-                leaves
-            }
             (Tree::End, Tree::End) => vec![],
+            _ => {
+                let mut leaves = vec![*value];
+                leaves.extend_from_slice(&internal_list(left));
+                leaves.extend_from_slice(&internal_list(right));
+                leaves
+            }
         },
         Tree::End => vec![],
     }

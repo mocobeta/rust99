@@ -1,5 +1,5 @@
 [package]
-name = "P66"
+name = "bintree_strrepr"
 version = "0.1.0"
 authors = ["Tomoko Uchida <tomoko.uchida.1111@gmail.com>"]
 edition = "2018"

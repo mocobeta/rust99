@@ -105,7 +105,7 @@ T(a T(b T(d . .) .) T(c T(e . .) .)) is not symmetric.
 
 ### [P57](./P57/src/lib.rs) (**) Binary search trees (dictionaries).
 
-Write a function to add an element to a binary search tree.
+Write a function `add_value()` to add an element to a [binary search tree](https://en.wikipedia.org/wiki/Binary_search_tree).
 
 Example: [examples/binsearch.rs](./P57/examples/binsearch.rs)
 ```rust
@@ -253,7 +253,7 @@ T(x T(x . .) T(x . T(x . .)))
 
 ### [P61](./P61/src/lib.rs) (*) Count the leaves of a binary tree.
 
-A leaf is a node with no successors. Write a method `leaf_cunt()` to count them.
+A leaf is a node with no successors. Write a function `leaf_count()` to count the number of them in a binary tree.
 
 Example: [examples/leaf_count.rs](./P61/examples/leaf_count.rs)
 ```rust
@@ -329,7 +329,7 @@ A complete binary tree with height _H_ is defined as follows: The levels 1,2,3,.
 
 Particularly, complete binary trees are used as data structures (or addressing schemes) for heaps.
 
-We can assign an address number to each node in a complete binary tree by enumerating the nodes in levelorder, starting at the root with number 1. In doing so, we realize that for every node _X_ with address _A_ the following property holds: The address of _X_'s left and right successors are 2 \* _A_ and 2 \* _A_+1, respectively, supposed the successors do exist. This fact can be used to elegantly construct a complete binary tree structure. Write a function `complete_binary_tree()` that takes as parameters the number of nodes and the value to put in each node.
+We can assign an address number to each node in a complete binary tree by enumerating the nodes in levelorder, starting at the root with number 1. In doing so, we realize that for every node _X_ with address _A_ the following property holds: The address of _X_'s left and right successors are 2 \* _A_ and 2 \* _A_ + 1, respectively, supposed the successors do exist. This fact can be used to elegantly construct a complete binary tree structure. Write a function `complete_binary_tree()` that takes as parameters the number of nodes and the value to put in each node.
 
 Example: [examples/cbt.rs](./P63/examples/cbt.rs)
 ```rust
@@ -363,8 +363,8 @@ pub enum PositionedTree<T: fmt::Display> {
         value: T,
         left: Box<PositionedTree<T>>,
         right: Box<PositionedTree<T>>,
-        x: i32,
-        y: i32,
+        x: u32,
+        y: u32,
     },
     End,
 }
@@ -387,22 +387,18 @@ impl<T: fmt::Display> fmt::Display for PositionedTree<T> {
 
 Write a function `layout_bintree()` that turns a normal Tree into a PositionedTree.
 
+The tree in the above illustration may be constructed with `from_list(&vec!['n', 'k', 'm', 'c', 'a', 'h', 'g', 'e', 'u', 'p', 's', 'q'])` (defined on P57). Use it to check your code.
+
 Example: [examples/layout_bintree.rs](./P64/examples/layout_bintree.rs)
 ```rust
-let tree = Tree::node(
-    'a',
-    Tree::node('b', Tree::end(), Tree::leaf('c')),
-    Tree::leaf('d'),
-);
+let tree = from_list(&vec!['n', 'k', 'm', 'c', 'a', 'h', 'g', 'e', 'u', 'p', 's', 'q']);
 println!("{}", layout_bintree(&tree))
 ```
 
 ```bash
 P64 $ cargo run -q --example layout_bintree
-T[3,1](a T[1,2](b . T[2,3](c . .)) T[4,2](d . .))
+T[8,1](n T[6,2](k T[2,3](c T[1,4](a . .) T[5,4](h T[4,5](g T[3,6](e . .) .) .)) T[7,3](m . .)) T[12,2](u T[9,3](p . T[11,4](s T[10,5](q . .) .)) .))
 ```
-
-The tree in the above illustration may be constructed with `from_list(&vec!['n', 'k', 'm', 'c', 'a', 'h', 'g', 'e', 'u', 'p', 's', 'q'])` (defined on P57). Use it to check your code.
 
 ### [P65](./P65/src/lib.rs) (**) Layout a binary tree (2).
 
@@ -416,17 +412,13 @@ Use the same conventions as in problem P64.
 
 Example: [examples/layout_bintree2.rs](./P65/examples/layout_bintree2.rs)
 ```rust
-let tree = Tree::node(
-    'a',
-    Tree::node('b', Tree::end(), Tree::leaf('c')),
-    Tree::leaf('d'),
-);
+let tree = from_list(&vec!['n', 'k', 'm', 'c', 'a', 'e', 'd', 'g', 'u', 'p', 'q']);
 println!("{}", layout_bintree2(&tree))
 ```
 
 ```bash
 P65 $ cargo run -q --example layout_bintree2
-T[3,1](a T[1,2](b . T[2,3](c . .)) T[5,2](d . .))
+T[15,1](n T[7,2](k T[3,3](c T[1,4](a . .) T[5,4](e T[4,5](d . .) T[6,5](g . .))) T[11,3](m . .)) T[23,2](u T[19,3](p . T[21,4](q . .)) .))
 ```
 
 ### P66 (***) Layout a binary tree (3).
@@ -437,7 +429,7 @@ Hint: Consider the horizontal distance between a node and its successor nodes. H
 
 ![](./images/p66.gif)
 
-### [P67](./P67/src/lib.rs) (**) A string representation of binary trees.
+### [P67](./bintree_strrepr/src/lib.rs) (**) A string representation of binary trees.
 
 Somebody represents binary trees as strings of the following type (see example below):
 
@@ -497,12 +489,12 @@ b) Write a function which does this inverse; i.e. given the string representatio
 Example: [examples/tree_from_string.rs](./P67/examples/tree_from_string.rs)
 ```rust
 let tree = Tree::from_string("a(b(d,e),c(,f(g,)))");
-println!("{}", tree);
+println!("{:?}", tree);
 ```
 
 ```bash
 P67 $ cargo run -q --example tree_from_string
-a(b(d,e),c(,f(g,)))
+Node { value: 'a', left: Node { value: 'b', left: Node { value: 'd', left: End, right: End }, right: Node { value: 'e', left: End, right: End } }, right: Node { value: 'c', left: End, right: Node { value: 'f', left: Node { value: 'g', left: End, right: End }, right: End } } }
 ```
 
 ### [P68](./P68/src/lib.rs) (**) Preorder and inorder sequences of binary trees.
@@ -535,7 +527,7 @@ P68 $ cargo run -q --example inorder
 
 b) Can you add an inverse functions of problem a); i.e. given a preorder sequence (a vector), construct a corresponding tree? If not, make the necessary arrangements.
 
-Hint: You may want to change the Tree implementation we defined on P67 to modify the existing tree structure. (Say, add `replace_left()` and/or `replace_right()`.)
+Hint: You may want to change the Tree implementation we defined on P67 to modify the existing tree structure. (Say, add `replace_left()` and `replace_right()` methods.)
 
 Example: [examples/from_preorder.rs](./P68/examples/from_preorder.rs)
 ```rust
@@ -579,7 +571,9 @@ let trees = pre_in_tree(
     &vec!['a', 'b', 'd', 'e', 'c', 'f', 'g'],
     &vec!['d', 'b', 'e', 'a', 'c', 'g', 'f'],
 );
-println!("{}", trees[0]);
+for tree in trees {
+    println!("{}", tree);
+}
 ```
 
 ```bash

@@ -6,14 +6,10 @@ pub fn add_value<T: fmt::Display + Copy + PartialOrd>(node: &mut Tree<T>, value:
         if value < *v {
             if let Some(left) = node.get_left_mut() {
                 add_value(left, value);
-            } else {
-                node.replace_left(Tree::leaf(value));
             }
         } else {
             if let Some(right) = node.get_right_mut() {
                 add_value(right, value);
-            } else {
-                node.replace_right(Tree::leaf(value));
             }
         }
     } else {

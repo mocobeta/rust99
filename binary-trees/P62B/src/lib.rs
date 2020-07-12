@@ -2,9 +2,7 @@ use bintree::Tree;
 use std::fmt;
 
 pub fn at_level<T: Copy + fmt::Display>(tree: &Tree<T>, level: usize) -> Vec<T> {
-    if level == 0 {
-        panic!("level must be greater than 0");
-    }
+    assert!(level > 0, "level must be greater than 0");
     if let Tree::Node { value, left, right } = tree {
         if level == 1 {
             vec![*value]

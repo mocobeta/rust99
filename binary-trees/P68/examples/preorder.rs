@@ -1,4 +1,4 @@
-use P67::Tree;
+use bintree_strrepr::Tree;
 use P68::*;
 
 pub fn main() {

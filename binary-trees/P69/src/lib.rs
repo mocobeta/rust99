@@ -1,4 +1,4 @@
-use P67::Tree;
+use bintree_strrepr::Tree;
 
 pub fn to_dotstring(tree: &Tree) -> String {
     match tree {
@@ -9,19 +9,12 @@ pub fn to_dotstring(tree: &Tree) -> String {
     }
 }
 
-pub fn from_dotstring(str: &str) -> Tree {
-    let (t, rem) = from_dotstring_rec(str);
-    if !rem.is_empty() {
-        panic!("Unaceppted input!");
-    }
-    t
-}
+pub fn from_dotstring(dotstr: &str) -> Tree {
+    // TODO: refactor this
+    fn from_dotstring_rec(s: &str) -> (Tree, &str) {
+        assert!(!s.is_empty(), "Unaccepted input!");
 
-fn from_dotstring_rec(str: &str) -> (Tree, &str) {
-    if str.is_empty() {
-        panic!("Unaccepted input!");
-    } else {
-        let (c, rem) = str.split_at(1);
+        let (c, rem) = s.split_at(1);
         let (_, v) = c.char_indices().next().unwrap();
         if v == '.' {
             (Tree::end(), rem)
@@ -34,6 +27,10 @@ fn from_dotstring_rec(str: &str) -> (Tree, &str) {
             (t, rem2)
         }
     }
+
+    let (t, rem) = from_dotstring_rec(dotstr);
+    assert!(rem.is_empty(), "Unaceppted input!");
+    t
 }
 
 #[cfg(test)]

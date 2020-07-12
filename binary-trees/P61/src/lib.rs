@@ -8,10 +8,8 @@ pub fn leaf_count<T: fmt::Display>(tree: &Tree<T>) -> usize {
             left,
             right,
         } => match (left.as_ref(), right.as_ref()) {
-            (Tree::Node { .. }, Tree::Node { .. }) => leaf_count(left) + leaf_count(right),
-            (Tree::Node { .. }, Tree::End) => leaf_count(left),
-            (Tree::End, Tree::Node { .. }) => leaf_count(right),
-            _ => 1,
+            (Tree::End, Tree::End) => 1,
+            _ => leaf_count(left) + leaf_count(right),
         },
         Tree::End => 0,
     }

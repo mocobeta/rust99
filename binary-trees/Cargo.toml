@@ -1,6 +1,7 @@
 [workspace]
 members = [
-    "bintree", "bintree_pos",
+    "bintree", "bintree_pos", "bintree_strrepr",
     "P55","P56","P57","P58","P59",
-    "P60","P61","P61A","P62","P62B","P63","P64","P65","P66","P67","P68","P69"
+    "P60","P61","P61A","P62","P62B","P63","P64","P65",
+    "P67","P68","P69"
 ]

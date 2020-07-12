@@ -14,29 +14,29 @@ pub fn min_hbal_nodes(h: usize) -> usize {
 
 pub fn max_hbal_height(n: usize) -> usize {
     let mut height = 0;
-    loop {
-        if min_hbal_nodes(height + 1) > n {
-            break;
-        } else {
-            height += 1;
-        }
+    while min_hbal_nodes(height + 1) <= n {
+        height += 1;
     }
     height
 }
 
 pub fn hbal_trees_with_nodes<T: Copy + fmt::Display>(n: usize, v: T) -> Vec<Tree<T>> {
-    let max_height = max_hbal_height(n);
-    let mut res = vec![];
-    for h in 0..max_height + 1 {
-        if 2u32.pow(h as u32) - 1 < n as u32 {
-            continue;
+    let min_height = {
+        let mut h = 0;
+        while 2u32.pow(h as u32) - 1 < n as u32 {
+            h += 1;
         }
-        hbal_trees(h, v)
-            .into_iter()
-            .filter(|t| t.count_nodes() == n)
-            .for_each(|t| res.push(t));
-    }
-    res
+        h
+    };
+    let max_height = max_hbal_height(n);
+
+    (min_height..max_height + 1)
+        .flat_map(|h| {
+            hbal_trees(h, v)
+                .into_iter()
+                .filter(|t| t.count_nodes() == n)
+        })
+        .collect()
 }
 
 #[cfg(test)]

@@ -1,8 +1,8 @@
 use mtree::MTree;
 
 pub fn node_count(tree: &MTree) -> usize {
-    let sum_nodes: usize = tree.get_children().iter().map(|t| node_count(t)).sum();
-    1 + sum_nodes
+    let sum_child_nodes: usize = tree.get_children().iter().map(|t| node_count(t)).sum();
+    1 + sum_child_nodes
 }
 
 #[cfg(test)]

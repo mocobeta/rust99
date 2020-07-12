@@ -1,16 +1,16 @@
 use mtree::MTree;
 
 pub fn internal_path_length(tree: &MTree) -> usize {
-    internal_path_length_inner(tree, 0)
-}
+    fn internal_path_length_inner(tree: &MTree, depth: usize) -> usize {
+        let lengths: usize = tree
+            .get_children()
+            .iter()
+            .map(|t| internal_path_length_inner(t, depth + 1))
+            .sum();
+        depth + lengths
+    }
 
-pub fn internal_path_length_inner(tree: &MTree, depth: usize) -> usize {
-    let lengths: usize = tree
-        .get_children()
-        .iter()
-        .map(|t| internal_path_length_inner(t, depth + 1))
-        .sum();
-    depth + lengths
+    internal_path_length_inner(tree, 0)
 }
 
 #[cfg(test)]

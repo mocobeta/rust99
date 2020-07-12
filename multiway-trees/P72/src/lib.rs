@@ -1,16 +1,16 @@
 use mtree::MTree;
 
 pub fn postorder(tree: &MTree) -> Vec<char> {
+    fn postorder_inner(tree: &MTree, acc: &mut Vec<char>) {
+        tree.get_children()
+            .iter()
+            .for_each(|t| postorder_inner(t, acc));
+        acc.push(tree.get_value());
+    }
+
     let mut res = vec![];
     postorder_inner(tree, &mut res);
     res
-}
-
-fn postorder_inner(tree: &MTree, acc: &mut Vec<char>) {
-    tree.get_children()
-        .iter()
-        .for_each(|t| postorder_inner(t, acc));
-    acc.push(tree.get_value());
 }
 
 #[cfg(test)]

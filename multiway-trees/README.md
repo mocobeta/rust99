@@ -4,7 +4,7 @@ A multiway tree is composed of a root element and a (possibly empty) set of succ
 
 ![](./images/p70.gif)
 
-The code to represent these (also available in [mtree/src/lib.rs](./mtree/src/lib.rs)) is somewhat simpler than the code for binary trees, partly because we don't separate classes for nodes and terminators, and partly because we don't need the restriction that the value type be ordered.
+The code to represent these (also available in [mtree/src/lib.rs](./mtree/src/lib.rs)) is somewhat simpler than the code for binary trees, partly because we don't separate classes for nodes and terminators, and partly because we don't need the restriction that the value type be ordered. Also, for simplicity, we suppose the information in the nodes is a single letter.
 
 ```rust
 /// Multiway Tree
@@ -161,6 +161,8 @@ P73 $ cargo run -q --example lispy_tree
 ```
 
 As a second, even more interesting, exercise try to write a function that takes a "lispy" string and turns it into a multiway tree.
+
+Hint: Can you define a BNF syntax for "lispy" string?
 
 Example: [examples/lispy_str_to_tree.rs](./P73/examples/lispy_str_to_tree.rs)
 ```rust

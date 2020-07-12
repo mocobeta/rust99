@@ -2,9 +2,7 @@ use mtree::MTree;
 
 pub fn lispy_tree(tree: &MTree) -> String {
     if tree.get_children().is_empty() {
-        let mut s = String::new();
-        s.push(tree.get_value());
-        s
+        String::from(tree.get_value())
     } else {
         let mut s = String::new();
         s.push('(');
@@ -24,52 +22,50 @@ pub fn lispy_tree(tree: &MTree) -> String {
 /// <Node>     ::= <Value> | '(' <Children> ')'
 /// <Children> ::= <Node> | <Node> ' ' <Children>
 pub fn lispy_str_to_tree(s: &str) -> MTree {
-    parse_node(s).0
-}
-
-fn parse_node(s: &str) -> (MTree, &str) {
-    let (c, last) = next_token(s);
-    match c {
-        '(' => {
-            let (v, last) = next_token(last);
-            let (c, last) = next_token(last);
-            if c != ' ' {
-                panic!("Invalid lispy string");
+    fn parse_node(s: &str) -> (MTree, &str) {
+        let (c, last) = next_token(s);
+        match c {
+            '(' => {
+                let (v, last) = next_token(last); // value of this node
+                let (c, last) = next_token(last);
+                assert!(c == ' ', "Invalid lispy string"); // next token shoud be a white space
+                let (children, last) = parse_children(last);
+                let (c, last) = next_token(last);
+                assert!(c == ')', "Invalid lispy string"); // next token shoud be a right parentheses
+                (MTree::node(v, children), last)
             }
-            let (children, last) = parse_children(last);
-            let (c, last) = next_token(last);
-            if c != ')' {
-                panic!("Invalid lispy string");
-            }
-            (MTree::node(v, children), last)
-        }
-        ' ' => parse_node(last),
-        _ => (MTree::leaf(c), last),
-    }
-}
-
-fn parse_children(s: &str) -> (Vec<MTree>, &str) {
-    let mut res = vec![];
-    let (node, last) = parse_node(s);
-    res.push(node);
-
-    let (c, _) = next_token(last);
-    match c {
-        ')' => (res, last),
-        _ => {
-            let (nodes, last) = parse_children(last);
-            for node in nodes {
-                res.push(node);
-            }
-            (res, last)
+            ' ' => parse_node(last),
+            _ => (MTree::leaf(c), last),
         }
     }
-}
 
-fn next_token(s: &str) -> (char, &str) {
-    let (first, last) = s.split_at(1);
-    let c = first.chars().nth(0).unwrap();
-    (c, last)
+    fn parse_children(s: &str) -> (Vec<MTree>, &str) {
+        let mut res = vec![];
+        let (node, last) = parse_node(s);
+        res.push(node);
+
+        let (c, _) = next_token(last);
+        match c {
+            ')' => (res, last),
+            _ => {
+                let (nodes, last) = parse_children(last);
+                for node in nodes {
+                    res.push(node);
+                }
+                (res, last)
+            }
+        }
+    }
+
+    fn next_token(s: &str) -> (char, &str) {
+        let (first, last) = s.split_at(1);
+        let c = first.chars().nth(0).unwrap();
+        (c, last)
+    }
+
+    let (tree, rem) = parse_node(s);
+    assert!(rem == "", "Invalid lispy string");
+    tree
 }
 
 #[cfg(test)]

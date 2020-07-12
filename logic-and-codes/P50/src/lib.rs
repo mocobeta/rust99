@@ -13,45 +13,41 @@ pub fn huffman(symbols: &Vec<(char, usize)>) -> Vec<(char, String)> {
     huffmann_tree_to_code(&huffman_tree.unwrap())
 }
 
-pub fn build_huffman_tree(min_heap: &mut BinaryHeap<Node>) -> Option<Node> {
+fn build_huffman_tree(min_heap: &mut BinaryHeap<Node>) -> Option<Node> {
     while min_heap.len() > 1 {
-        let node1 = min_heap.pop().unwrap();
-        let node2 = min_heap.pop().unwrap();
-        let (left, right) = match node1.cmp(&node2) {
-            Ordering::Equal => (node1, node2),
-            Ordering::Greater => (node1, node2),
-            Ordering::Less => (node2, node1),
-        };
+        let left = min_heap.pop().unwrap();
+        let right = min_heap.pop().unwrap();
         let new_node = Node::Internal(left.freq() + right.freq(), Box::new(left), Box::new(right));
         min_heap.push(new_node);
     }
     min_heap.pop()
 }
 
-pub fn huffmann_tree_to_code(root: &Node) -> Vec<(char, String)> {
-    let mut code = traverse_huffman_tree(root, String::new());
+fn huffmann_tree_to_code(root: &Node) -> Vec<(char, String)> {
+    fn generate_huffman_codes(node: &Node, buf: String) -> Vec<(char, String)> {
+        match node {
+            Node::Leaf(_, symbol) => vec![(*symbol, buf)],
+            Node::Internal(_, left, right) => {
+                let mut res = vec![];
+                let mut buf_left = buf.clone();
+                buf_left.push('0');
+                res.extend(generate_huffman_codes(&left, buf_left));
+                let mut buf_right = buf.clone();
+                buf_right.push('1');
+                res.extend(generate_huffman_codes(&right, buf_right));
+                res
+            }
+        }
+    }
+
+    let mut code = generate_huffman_codes(root, String::new());
     code.sort_by(|a, b| a.0.cmp(&b.0));
     code
 }
 
-fn traverse_huffman_tree(node: &Node, buf: String) -> Vec<(char, String)> {
-    match node {
-        Node::Leaf(_, symbol) => vec![(*symbol, buf)],
-        Node::Internal(_, left, right) => {
-            let mut res = vec![];
-            let mut buf_left = buf.clone();
-            buf_left.push('0');
-            res.extend(traverse_huffman_tree(&left, buf_left));
-            let mut buf_right = buf.clone();
-            buf_right.push('1');
-            res.extend(traverse_huffman_tree(&right, buf_right));
-            res
-        }
-    }
-}
-
 #[derive(Debug)]
-pub enum Node {
+/// Reresents a leaf or internal node of Hufmann tree
+enum Node {
     Leaf(usize, char),
     Internal(usize, Box<Node>, Box<Node>),
 }

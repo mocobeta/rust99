@@ -10,14 +10,14 @@ Define functions and, or, not, nand, nor, xor, impli[1], and equ[2] (for logical
 
 Example: [examples/logical_functions.rs](./P46/examples/logical_functions.rs)
 ```rust
-    println!("and(true,false)={}", and(true, false));
-    println!("or(true,false)={}", or(true, false));
-    println!("not(true)={}", not(true));
-    println!("nand(true,false)={}", nand(true, false));
-    println!("nor(true,false)={}", nor(true, false));
-    println!("xor(true,false)={}", xor(true, false));
-    println!("impli(true,false)={}", impli(true, false));
-    println!("equ(true,false)={}", equ(true, false));
+println!("and(true,false)={}", and(true, false));
+println!("or(true,false)={}", or(true, false));
+println!("not(true)={}", not(true));
+println!("nand(true,false)={}", nand(true, false));
+println!("nor(true,false)={}", nor(true, false));
+println!("xor(true,false)={}", xor(true, false));
+println!("impli(true,false)={}", impli(true, false));
+println!("equ(true,false)={}", equ(true, false));
 ```
 
 ```bash
@@ -99,7 +99,7 @@ false   false   false
 
 ### [P48](./P48/src/lib.rs) (**) Truth tables for logical expressions (3).
 
-Generalize problem P47 in such a way that the logical expression may contain any number of logical variables. Define table in a way that table(k,expr) prints the truth table for the expression `expr`, which contains `k` logical variables.
+Generalize problem P47 in such a way that the logical expression may contain any number of logical variables. Define table in a way that `table(k,expr)` prints the truth table for the expression `expr`, which contains `k` logical variables.
 
 Example: [examples/table.rs](./P48/examples/table.rs)
 ```rust
@@ -163,6 +163,16 @@ First of all, consult a good book on discrete mathematics or algorithms for a de
 We suppose a set of symbols with their frequencies, given as a list of (S, F) Tuples. E.g. `vec![('a', 45), ('b', 13), ('c', 12), ('d', 16), ('e', 9), ('f', 5)]`. Our objective is to construct a list of (S, C) Tuples, where C is the Huffman code word for the symbol S.
 
 Hint: See [std::collections::BinaryHeap](https://doc.rust-lang.org/std/collections/struct.BinaryHeap.html) to build the Huffman tree.
+
+Hint: You could define an enum, which has recursive data structure, to represent a node of Huffman tree; see ["Using Box<T> to Point to Data on the Heap"](https://doc.rust-lang.org/book/ch15-01-box.html) for more details about `Box<T>` pointer.
+
+```rust
+/// Reresents a leaf or internal node of Hufmann tree
+enum Node {
+    Leaf(usize, char),
+    Internal(usize, Box<Node>, Box<Node>),
+}
+```
 
 Example: [examples/huffman.rs](./P50/examples/huffman.rs)
 ```rust

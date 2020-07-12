@@ -1,32 +1,32 @@
-pub fn table(argsize: usize, expr: fn(Vec<bool>) -> bool) -> Vec<Vec<bool>> {
+pub fn table(argsize: usize, expr: fn(&[bool]) -> bool) -> Vec<Vec<bool>> {
     var_list(argsize)
         .into_iter()
         .map(|vars| {
             let mut res = vars.clone();
-            res.push(expr(vars));
+            res.push(expr(&vars));
             res
         })
         .collect()
 }
 
-// calculate bool matrix for given size
+// generate bool matrix for given size
 fn var_list(argsize: usize) -> Vec<Vec<bool>> {
-    var_list_rec(argsize, &vec![])
-}
-
-fn var_list_rec(k: usize, acc: &Vec<bool>) -> Vec<Vec<bool>> {
-    if k == 0 {
-        vec![acc.clone()]
-    } else {
-        let mut res = vec![];
-        let mut acc2_true = acc.clone();
-        acc2_true.push(true);
-        res.extend(var_list_rec(k - 1, &acc2_true));
-        let mut acc2_false = acc.clone();
-        acc2_false.push(false);
-        res.extend(var_list_rec(k - 1, &acc2_false));
-        res
+    fn var_list_rec(k: usize, acc: &Vec<bool>) -> Vec<Vec<bool>> {
+        if k == 0 {
+            vec![acc.clone()]
+        } else {
+            let mut res = vec![];
+            let mut acc2_true = acc.clone();
+            acc2_true.push(true);
+            res.extend(var_list_rec(k - 1, &acc2_true));
+            let mut acc2_false = acc.clone();
+            acc2_false.push(false);
+            res.extend(var_list_rec(k - 1, &acc2_false));
+            res
+        }
     }
+
+    var_list_rec(argsize, &vec![])
 }
 
 #[cfg(test)]
@@ -51,7 +51,7 @@ mod tests {
     }
     #[test]
     fn test_table() {
-        let f = |args: Vec<bool>| -> bool {
+        let f = |args: &[bool]| -> bool {
             let a = args.get(0).unwrap();
             let b = args.get(1).unwrap();
             let c = args.get(2).unwrap();

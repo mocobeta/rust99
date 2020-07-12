@@ -1,4 +1,4 @@
-pub fn gray(n: usize) -> Vec<String> {
+pub fn gray<'a>(n: usize) -> Vec<String> {
     let mut code = GrayCode::new();
     code.generate(n)
 }
@@ -16,12 +16,13 @@ impl GrayCode {
         }
     }
 
+    // see https://www.geeksforgeeks.org/generate-n-bit-gray-codes/
     pub fn generate(&mut self, n: usize) -> Vec<String> {
         if n <= self.bits {
             self.cache
-                .clone()
-                .into_iter()
-                .filter(|x| x.len() <= n)
+                .iter()
+                .filter(|&x| x.len() == n)
+                .map(|x| x.clone())
                 .collect()
         } else {
             let mut res = vec![];
@@ -32,6 +33,7 @@ impl GrayCode {
                 .map(|c| {
                     let mut nc = "0".to_string();
                     nc.extend(c.chars());
+                    self.cache.push(nc.clone());
                     nc
                 })
                 .collect();
@@ -44,9 +46,11 @@ impl GrayCode {
                 .map(|c| {
                     let mut nc = "1".to_string();
                     nc.extend(c.chars());
+                    self.cache.push(nc.clone());
                     nc
                 })
                 .collect();
+            self.bits = n;
             res.extend(code_1);
             res
         }
@@ -56,6 +60,33 @@ impl GrayCode {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_gray_code() {
+        let mut code = GrayCode::new();
+        code.generate(3);
+
+        assert_eq!(code.bits, 3);
+        assert_eq!(
+            code.cache,
+            vec![
+                "0".to_string(),
+                "1".to_string(),
+                "00".to_string(),
+                "01".to_string(),
+                "11".to_string(),
+                "10".to_string(),
+                "000".to_string(),
+                "001".to_string(),
+                "011".to_string(),
+                "010".to_string(),
+                "110".to_string(),
+                "111".to_string(),
+                "101".to_string(),
+                "100".to_string()
+            ]
+        );
+    }
     #[test]
     fn test_gray0() {
         assert_eq!(gray(0), vec![] as Vec<String>);

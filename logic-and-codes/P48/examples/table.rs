@@ -2,7 +2,7 @@ use P47::*;
 use P48::*;
 
 pub fn main() {
-    let f = |args: Vec<bool>| -> bool {
+    let f = |args: &[bool]| -> bool {
         let a = args.get(0).unwrap();
         let b = args.get(1).unwrap();
         let c = args.get(2).unwrap();

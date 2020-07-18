@@ -1,4 +1,4 @@
-# [WIP] R-99: Ninety-Nine Rust Problems
+# R-99: Ninety-Nine Rust Problems
 
 ## What is this repository?
 

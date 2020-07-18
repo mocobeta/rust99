@@ -1,10 +1,10 @@
 use graph::Graph;
 use std::hash::Hash;
 
-pub fn color_nodes<T: Hash + Copy + Eq>(g: &Graph<T>) -> Vec<(T, usize)> {
+pub fn color_nodes<T: Hash + Copy + Eq + Ord>(g: &Graph<T>) -> Vec<(T, u32)> {
     let nodes = g.get_nodes_by_degree(true);
     let mut colored_nodes = vec![];
-    let mut color = 0;
+    let mut color = 0u32;
     let mut res = vec![];
 
     // Welsh-Powell's algorithm
@@ -40,6 +40,7 @@ mod tests {
     fn test_color_nodes() {
         let g = unlabeled::from_string("[a-b, b-c, a-c, a-d]");
         let colored = color_nodes(&g);
+        println!("{:?}", colored);
         assert!(colored.contains(&('a', 1)));
         assert!(colored.contains(&('b', 2)));
         assert!(colored.contains(&('c', 3)));

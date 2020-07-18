@@ -1,5 +1,5 @@
 [package]
-name = "P83"
+name = "P88"
 version = "0.1.0"
 authors = ["Tomoko Uchida <tomoko.uchida.1111@gmail.com>"]
 edition = "2018"
@@ -9,4 +9,4 @@ edition = "2018"
 [dependencies]
 graph = { path = "../graph" }
 P80 = { path = "../P80" }
-P82 = { path = "../P82" }
+P87 = { path = "../P87" }

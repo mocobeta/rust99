@@ -144,7 +144,7 @@ where
 pub type Graph<T> = LabeledGraph<T, ()>;
 ```
 
-Notice that we use `std::rc::Rc` and `std::rc::Weak` smart pointers to maintain multiple ownership. A `LabeledGraph` (or `Graph`) instance refers `Node`s and `Edge`s by `Rc<_>` pointer (strong reference); that means a graph _owns_ nodes and edges as its components. On the other hand, `Node` and `Edge` refer each other by `Weak<_>` pointer (weak reference); so that there are no reference cycles. In addition, we shall use `std::cell::RefCell` to allow immutable or mutable borrows checked at _runtime_. For more details, see references below:
+Notice that we use `std::rc::Rc` and `std::rc::Weak` smart pointers to maintain multiple ownership. A `LabeledGraph` (or `Graph`) instance refers `Node`s and `Edge`s by `Rc<_>` pointer (strong reference); that means a graph _owns_ nodes and edges as its components. On the other hand, `Node` and `Edge` refer each other by `Weak<_>` pointer (weak reference); so that there are no reference cycles. In addition, we shall use `std::cell::RefCell` to allow immutable or mutable borrows checked at _runtime_. For more details, see documentation below:
 
 - ["Rc<T>, the Reference Counted Smart Pointer"](https://doc.rust-lang.org/book/ch15-04-rc.html)
 - ["RefCell<T> and the Interior Mutability Pattern"](https://doc.rust-lang.org/book/ch15-05-interior-mutability.html)
@@ -214,7 +214,7 @@ labeled digraph (adjacency-list form)
 
 Write a function to find acyclic paths from one node to another in a graph. The method should return all paths. 
 
-To handle multiple kinds of graph, we define `PathFinder` trait as follows. Implement `find_paths()` function for each graph (you may want to create common functions to avoid duplicating the logic).
+To handle multiple kinds of graph, we shall define `PathFinder` trait as follows. Implement `find_paths()` method for each graph (you may want to create common functions or methods to avoid duplicating the logic).
 
 ```rust
 pub trait PathFinder<T> {
@@ -251,7 +251,7 @@ Paths from p to k: []
 
 Write a function named to find closed paths (cycles) starting at a given node in a graph. The method should return all cycles.
 
-To handle multiple kinds of graph, we define `CycleFinder` trait as follows. Implement `find_cycles()` function for each graph.
+To handle multiple kinds of graph, we define `CycleFinder` trait as follows. Implement `find_cycles()` method for each graph.
 
 ```rust
 pub trait CycleFinder<T> {
@@ -286,7 +286,7 @@ Cycles starting at g: []
 
 ### [P83](./P83/src/lib.rs) (**) Construct all spanning trees.
 
-Write a function `spanning_trees()` to construct all spanning trees of a given graph. With this method, find out how many spanning trees there are for the graph below. The data of this example graph can be found below. When you have a correct solution for the spanningTrees method, use it to define two other useful methods: `is_tree()` and `is_connected()`. Both are five-minute tasks! 
+Write a function `spanning_trees()` to construct all [spanning trees](https://en.wikipedia.org/wiki/Spanning_tree) of a given graph. With this method, find out how many spanning trees there are for the graph below. The data of this example graph can be found below. When you have a correct solution for the spanningTrees method, use it to define two other useful methods: `is_tree()` and `is_connected()`. Both are five-minute tasks! 
 
 ![](./images/p83.gif)
 
@@ -317,7 +317,9 @@ P83 $ cargo run -q --example spanning_trees
 
 ### [P84](./P84/src/lib.rs) (**) Construct the minimal spanning tree.
 
-Write a method `minimal_spanning_tree` to construct the minimal spanning tree of a given labeled graph. Hint: Use Prim's Algorithm. A small modification of the solution of P83 does the trick. The data of the example graph can be found below.
+Write a function `minimal_spanning_tree()` to construct the [minimal spanning tree](https://en.wikipedia.org/wiki/Minimum_spanning_tree) of given labeled graph. 
+
+Hint: Use Prim's Algorithm. A small modification of the solution of P83 does the trick. The data of the example graph can be found below.
 
 ![](./images/p84.gif)
 
@@ -331,7 +333,7 @@ Example: [examples/minimal_spanning_trees.rs](./P84/examples/minimal_spanning_tr
             ('g', 'h', 1),
         ],
     );
-    let trees = P84::minimal_spanning_trees(&g);
+    let trees = minimal_spanning_trees(&g);
     for tree in trees {
         println!("{:?} (weight={})", labeled::to_term_form(&tree), label_sum(&tree));
     }
@@ -351,19 +353,25 @@ Write a function that determines whether two graphs are isomorphic.
 
 Example: [examples/is_isomorphic_to.rs](./P85/examples/is_isomorphic_to.rs)
 ```rs
-let g1 = unlabeled::from_string("[a-b]");
-let g2 = unlabeled::from_string("[5-7]");
+let g1 = unlabeled::from_string("[a-b b-c]");
+let g2 = unlabeled::from_string("[5-7 9-7]");
+println!(
+    "{:?} is isomorphic to {:?}: {}", 
+    unlabeled::to_term_form(&g1), unlabeled::to_term_form(&g2), is_isomorphic_to(&g1, &g2)
+);
+
+let g1 = unlabeled::from_string("[a-b b-c c-d]");
+let g2 = unlabeled::from_string("[5-7 9-7 7-3]");
 println!(
     "{:?} is isomorphic to {:?}: {}",
-    unlabeled::to_term_form(&g1),
-    unlabeled::to_term_form(&g2),
-    is_isomorphic_to(&g1, &g2)
+    unlabeled::to_term_form(&g1), unlabeled::to_term_form(&g2), is_isomorphic_to(&g1, &g2)
 );
 ```
 
 ```bash
 P85 $ cargo run -q --example is_isomorphic_to
-(['b', 'a'], [('a', 'b')]) is isomorphic to (['7', '5'], [('5', '7')]): true
+(['a', 'c', 'b'], [('a', 'b'), ('b', 'c')]) is isomorphic to (['5', '9', '7'], [('5', '7'), ('7', '9')]): true
+(['b', 'd', 'a', 'c'], [('b', 'c'), ('a', 'b'), ('c', 'd')]) is isomorphic to (['7', '9', '3', '5'], [('5', '7'), ('7', '9'), ('3', '7')]): false
 ```
 
 ### [P86](./P86/src/lib.rs) (**) Node degree and graph coloration.
@@ -381,7 +389,7 @@ P86 $ cargo run -q --example degree
 degree of node 'a' = 3
 ```
 
-b) Write a method for Graph that lists all nodes of a graph sorted according to ascending or decreasing degree.
+b) Write a method for LabeledGraph that lists all nodes of a graph sorted according to ascending or decreasing degree; if there are nodes that have a same degree, sort them by their values.
 
 Example: [examples/nodes_by_degree.rs](./P86/examples/nodes_by_degree.rs)
 ```rs
@@ -407,8 +415,65 @@ P86 $ cargo run -q --example color_nodes
 [('a', 1), ('b', 2), ('d', 2), ('c', 3)]
 ```
 
-### P87 (**) Depth-first order graph traversal.
+### [P87](./P87/src/lib.rs) (**) Depth-first order graph traversal.
 
-### P88 (**) Connected components.
+Write a function that generates a depth-first order graph traversal sequence. The starting point should be specified, and the output should be a list of nodes that are reachable from this starting point (in depth-first order). 
 
-### P89 (**) Bipartite graphs.
+Example: [examples/depth_first.rs](./P87/examples/depth_first.rs)
+```rust
+let g = unlabeled::from_string("[a-b, b-c, e, a-c, a-d]");
+println!("{:?}", nodes_by_depth_from(&g, 'd'));
+```
+
+```bash
+P87 $ cargo run -q --example depth_first
+['c', 'b', 'a', 'd']
+```
+
+### [P88](./P88/src/lib.rs) (**) Connected components.
+
+Write a function `split_graph()` that splits a graph into its connected components.
+
+Example: [examples/split_graph.rs](./P88/examples/split_graph.rs)
+```rust
+let splitted = split_graph(&unlabeled::from_string("[a-b, b-c, d, e-f, f-g, g-e, h]"));
+for g in splitted {
+    println!("{:?}", unlabeled::to_term_form(&g));
+}
+```
+
+```bash
+P88 $ cargo run -q --example split_graph
+(['c', 'b', 'a'], [('b', 'c'), ('a', 'b')])
+(['h'], [])
+(['g', 'e', 'f'], [('e', 'f'), ('f', 'g'), ('e', 'g')])
+(['d'], [])
+```
+
+### [P89](./P89/src/lib.rs) (**) Bipartite graphs.
+
+Write a function `is_bipartite()` that determines whether a given graph is [bipartite](https://en.wikipedia.org/wiki/Bipartite_graph).
+
+Hint: a graph is bipartite if and only if it is two-colorable: https://cp-algorithms.com/graph/bipartite-check.html
+
+Example: [examples/is_bipartite.rs](./P89/examples/is_bipartite.rs)
+```rust
+let g = unlabeled::from_string("[a-b, b-c, d, e-f, f-g, g-e, h]");
+println!(
+    "{:?} is bipartite: {}",
+    unlabeled::to_term_form(&g),
+    is_bipartite(&g)
+);
+let g = unlabeled::from_string("[a-b, b-c, d, e-f, g-e, h]");
+println!(
+    "{:?} is bipartite: {}",
+    unlabeled::to_term_form(&g),
+    is_bipartite(&g)
+);
+```
+
+```bash
+P89 $ cargo run -q --example is_bipartite
+(['b', 'a', 'h', 'e', 'g', 'c', 'd', 'f'], [('b', 'c'), ('e', 'f'), ('a', 'b'), ('e', 'g'), ('f', 'g')]) is bipartite: false
+(['h', 'a', 'd', 'e', 'f', 'g', 'b', 'c'], [('e', 'f'), ('a', 'b'), ('e', 'g'), ('b', 'c')]) is bipartite: true
+```

@@ -18,7 +18,7 @@ pub fn main() {
             ('g', 'h', 1),
         ],
     );
-    let trees = P84::minimal_spanning_trees(&g);
+    let trees = minimal_spanning_trees(&g);
     for tree in trees {
         println!(
             "{:?} (weight={})",

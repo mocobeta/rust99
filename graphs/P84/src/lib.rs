@@ -6,7 +6,7 @@ pub fn minimal_spanning_trees(graph: &LabeledGraph<char, i32>) -> Vec<LabeledGra
     if all_nodes.is_empty() {
         vec![]
     } else {
-        // edges, frontiers, visited
+        // edges, visited
         let mut paths: Vec<(Vec<(char, char, i32)>, Vec<char>)> = vec![];
         // resolved minimum paths
         let mut found_paths: Vec<(Vec<(char, char, i32)>, i32)> = vec![];
@@ -22,10 +22,11 @@ pub fn minimal_spanning_trees(graph: &LabeledGraph<char, i32>) -> Vec<LabeledGra
             let (edges, visited) = paths.pop().unwrap();
             let score = path_score(&edges);
             if visited.len() == graph.size() {
+                // found a path with minimal score
                 found_paths.push((edges, score));
                 continue;
             }
-            let mut min_edge = ('x', 'x', std::i32::MAX);
+            let mut min_edge = ('_', '_', std::i32::MAX);
             let mut found = false;
             for node in &visited {
                 for (next, label) in graph.get_node(node).unwrap().adjacents_with_label() {

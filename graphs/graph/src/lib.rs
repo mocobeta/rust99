@@ -1,4 +1,5 @@
 use std::cell::{Ref, RefCell};
+use std::cmp::Ordering;
 use std::collections::HashMap;
 use std::hash::Hash;
 use std::rc::{Rc, Weak};
@@ -104,7 +105,7 @@ where
 #[derive(Debug, Clone)]
 pub struct LabeledGraph<T, U>
 where
-    T: Hash + Copy + Eq,
+    T: Hash + Copy + Eq + PartialOrd,
     U: Copy + Eq,
 {
     nodes: HashMap<T, Rc<RefCell<Node<T, U>>>>,
@@ -113,7 +114,7 @@ where
 
 impl<T, U> LabeledGraph<T, U>
 where
-    T: Hash + Copy + Eq,
+    T: Hash + Copy + Eq + Ord,
     U: Copy + Eq,
 {
     /// Constructs an empty graph.
@@ -142,15 +143,40 @@ where
         self.nodes.iter().map(|(_, n)| n.borrow()).collect()
     }
 
+    /// Returns all node vlues in thin graph.
+    pub fn get_node_values(&self) -> Vec<T> {
+        self.nodes.iter().map(|(&v, _)| v).collect()
+    }
+
     /// Returns list of all nodes sorted according to decreasing (or increasing) degree.
     pub fn get_nodes_by_degree(&self, desc: bool) -> Vec<Ref<Node<T, U>>> {
         let mut nodes = self.get_nodes();
         if desc {
-            nodes.sort_by(|a, b| b.degree().cmp(&a.degree()));
+            nodes.sort_by(|a, b| {
+                let ord = b.degree().cmp(&a.degree());
+                match ord {
+                    Ordering::Equal => a.get_value().cmp(&b.get_value()),
+                    _ => ord,
+                }
+            });
         } else {
-            nodes.sort_by(|a, b| a.degree().cmp(&b.degree()));
+            nodes.sort_by(|a, b| {
+                let ord = a.degree().cmp(&b.degree());
+                match ord {
+                    Ordering::Equal => a.get_value().cmp(&b.get_value()),
+                    _ => ord,
+                }
+            });
         }
         nodes
+    }
+
+    /// Checks if two ndoes are linkedx
+    pub fn is_linked(&self, v1: T, v2: T) -> bool {
+        match &self.get_node(&v1) {
+            Some(node) => node.adjacents().contains(&v2),
+            None => false,
+        }
     }
 
     /// Adds a node to this graph.
@@ -186,7 +212,7 @@ where
 
 impl<T, U> PartialEq for LabeledGraph<T, U>
 where
-    T: Hash + Copy + Eq,
+    T: Hash + Copy + Eq + Ord,
     U: Copy + Eq,
 {
     fn eq(&self, other: &LabeledGraph<T, U>) -> bool {
@@ -221,7 +247,7 @@ where
 #[allow(dead_code)]
 pub type Graph<T> = LabeledGraph<T, ()>;
 
-impl<T: Hash + Copy + Eq> Graph<T> {
+impl<T: Hash + Copy + Eq + Ord> Graph<T> {
     /// Adds an edge to this graph; i.e., connects two nodes in this graph.
     pub fn add_edge(&mut self, v1: T, v2: T) {
         self.add_edge_with_value(v1, v2, None);
@@ -268,6 +294,11 @@ where
     /// Returns all nodes in this digraph.
     pub fn get_nodes(&self) -> Vec<Ref<Node<T, U>>> {
         self.nodes.iter().map(|(_, n)| n.borrow()).collect()
+    }
+
+    /// Returns all node vlues in thin graph.
+    pub fn get_node_values(&self) -> Vec<T> {
+        self.nodes.iter().map(|(&v, _)| v).collect()
     }
 
     /// Adds a node to this digraph.
@@ -445,12 +476,8 @@ mod tests {
 
         let nodes = g.get_nodes_by_degree(true);
         assert_eq!(nodes.get(0).unwrap().get_value(), &'a');
-        assert!(
-            nodes.get(1).unwrap().get_value() == &'b' || nodes.get(1).unwrap().get_value() == &'c'
-        );
-        assert!(
-            nodes.get(2).unwrap().get_value() == &'b' || nodes.get(2).unwrap().get_value() == &'c'
-        );
+        assert_eq!(nodes.get(1).unwrap().get_value(), &'b');
+        assert_eq!(nodes.get(2).unwrap().get_value(), &'c');
         assert_eq!(nodes.get(3).unwrap().get_value(), &'d');
     }
 }

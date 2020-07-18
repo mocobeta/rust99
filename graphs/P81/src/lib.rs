@@ -2,16 +2,46 @@ use graph::{LabeledDigraph, LabeledGraph};
 
 pub trait PathFinder<T> {
     fn find_paths(&self, start: char, end: char) -> Vec<Vec<T>>;
+
+    fn find_all_paths<F>(start: char, end: char, adjacents: F) -> Vec<Vec<char>>
+    where
+        F: Fn(char) -> Vec<char>,
+    {
+        let mut paths = vec![];
+        let mut resolved = vec![];
+
+        // add the start node to visited list and paths.
+        paths.push(vec![start]);
+
+        // repeats until all edges are marked visited.
+        while !paths.is_empty() {
+            let path = paths.pop().unwrap();
+            let last = *path.last().unwrap();
+            let adjs = adjacents(last);
+            for next in adjs {
+                if path.contains(&next) {
+                    continue; // prevent cycles
+                }
+                let mut new_path = path.clone();
+                new_path.push(next);
+                if next == end {
+                    // reached to the end
+                    resolved.push(new_path);
+                } else {
+                    // continue to traverse the graph
+                    paths.push(new_path);
+                }
+            }
+        }
+        resolved
+    }
 }
 
 impl<U: Copy + Eq> PathFinder<char> for LabeledGraph<char, U> {
     fn find_paths(&self, start: char, end: char) -> Vec<Vec<char>> {
-        let adjacents = |v| {
-            let node = self.get_node(&v).unwrap();
-            node.adjacents()
-        };
+        let adjacents = |v| self.get_node(&v).unwrap().adjacents();
         if let Some(_) = self.get_node(&start) {
-            find_all_paths(start, end, adjacents)
+            Self::find_all_paths(start, end, adjacents)
         } else {
             vec![]
         }
@@ -20,49 +50,13 @@ impl<U: Copy + Eq> PathFinder<char> for LabeledGraph<char, U> {
 
 impl<U: Copy + Eq> PathFinder<char> for LabeledDigraph<char, U> {
     fn find_paths(&self, start: char, end: char) -> Vec<Vec<char>> {
-        let adjacents = |v| {
-            let node = self.get_node(&v).unwrap();
-            node.adjacents()
-        };
+        let adjacents = |v| self.get_node(&v).unwrap().adjacents();
         if let Some(_) = self.get_node(&start) {
-            find_all_paths(start, end, adjacents)
+            Self::find_all_paths(start, end, adjacents)
         } else {
             vec![]
         }
     }
-}
-
-fn find_all_paths<F>(start: char, end: char, adjacents: F) -> Vec<Vec<char>>
-where
-    F: Fn(char) -> Vec<char>,
-{
-    let mut paths = vec![];
-    let mut resolved = vec![];
-
-    // add the start node to visited list and paths.
-    paths.push(vec![start]);
-
-    // repeats until all edges are marked visited.
-    while !paths.is_empty() {
-        let path = paths.pop().unwrap();
-        let last = *path.last().unwrap();
-        let adjs = adjacents(last);
-        for next in adjs {
-            if path.contains(&next) {
-                continue; // prevent cycles
-            }
-            let mut new_path = path.clone();
-            new_path.push(next);
-            if next == end {
-                // reached to the end
-                resolved.push(new_path);
-            } else {
-                // continue to traverse the graph
-                paths.push(new_path);
-            }
-        }
-    }
-    resolved
 }
 
 #[cfg(test)]

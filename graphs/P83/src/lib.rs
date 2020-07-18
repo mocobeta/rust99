@@ -1,5 +1,6 @@
 use graph::Graph;
 use P80::graph_converters::unlabeled;
+use P82::*;
 
 pub fn spanning_trees(graph: &Graph<char>) -> Vec<Graph<char>> {
     let all_nodes: Vec<char> = graph.get_nodes().iter().map(|n| *n.get_value()).collect();
@@ -19,6 +20,7 @@ pub fn spanning_trees(graph: &Graph<char>) -> Vec<Graph<char>> {
         while !paths.is_empty() {
             let (edges, visited) = paths.pop().unwrap();
             if visited.len() == graph.size() && !found_paths.contains(&edges) {
+                // found a path that visits all nodes in the graph
                 found_paths.push(edges);
                 continue;
             }
@@ -41,13 +43,24 @@ pub fn spanning_trees(graph: &Graph<char>) -> Vec<Graph<char>> {
             }
         }
 
-        let mut trees = vec![];
-        for path in found_paths {
-            let tree = unlabeled::from_term_form(&all_nodes, &path);
-            trees.push(tree);
-        }
-        trees
+        // convert all found paths to a tree list
+        found_paths
+            .iter()
+            .map(|path| unlabeled::from_term_form(&all_nodes, &path))
+            .collect()
     }
+}
+
+pub fn is_tree(graph: &Graph<char>) -> bool {
+    !spanning_trees(&graph).is_empty()
+        && graph
+            .get_nodes()
+            .iter()
+            .all(|node| graph.find_cycles(*node.get_value()).is_empty())
+}
+
+pub fn is_connected(graph: &Graph<char>) -> bool {
+    !spanning_trees(&graph).is_empty()
 }
 
 #[cfg(test)]
@@ -58,5 +71,21 @@ mod tests {
         let g = unlabeled::from_string("[a-b, b-c, a-c]");
         let trees = spanning_trees(&g);
         assert_eq!(trees.len(), 3);
+    }
+
+    #[test]
+    fn test_is_tree() {
+        let g = unlabeled::from_string("[a-b, b-c]");
+        assert!(is_tree(&g));
+        let g = unlabeled::from_string("[a-b, b-c, a-c]");
+        assert!(!is_tree(&g));
+    }
+
+    #[test]
+    fn test_is_connected() {
+        let g = unlabeled::from_string("[a-b, b-c, a-c]");
+        assert!(is_connected(&g));
+        let g = unlabeled::from_string("[a-b, b-c, a-c, d-e]");
+        assert!(!is_connected(&g));
     }
 }

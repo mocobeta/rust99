@@ -1,24 +1,26 @@
-use graph::{Graph, Node};
+use graph::Graph;
 use std::hash::Hash;
 
-pub fn nodes_by_depth_from<T: Hash + Copy + Eq>(g: &Graph<T>, start: T) -> Vec<T> {
-    traverse(g, start, &mut vec![])
-}
-
-fn traverse<T: Hash + Copy + Eq>(g: &Graph<T>, v: T, visited: &mut Vec<T>) -> Vec<T> {
-    let neighbors = g.get_node(&v).unwrap().adjacents();
-    if neighbors.iter().all(|n| visited.contains(n)) {
-        vec![v]
-    } else {
-        visited.push(v);
-        let mut res = vec![];
-        for n in neighbors {
-            if !visited.contains(&n) {
-                res.extend_from_slice(&traverse(g, n, visited));
+pub fn nodes_by_depth_from<T: Hash + Copy + Eq + Ord>(g: &Graph<T>, start: T) -> Vec<T> {
+    fn traverse<T: Hash + Copy + Eq + Ord>(g: &Graph<T>, v: T, visited: &mut Vec<T>) -> Vec<T> {
+        if !visited.contains(&v) {
+            visited.push(v);
+        }
+        let neighbors = g.get_node(&v).unwrap().adjacents();
+        let to_visit: Vec<&T> = neighbors.iter().filter(|&n| !visited.contains(n)).collect();
+        for n in to_visit {
+            for w in traverse(g, *n, visited) {
+                if !visited.contains(&w) {
+                    visited.push(w);
+                }
             }
         }
-        res
+        visited.clone()
     }
+
+    let mut res = traverse(g, start, &mut vec![]);
+    res.reverse();
+    res
 }
 
 #[cfg(test)]
@@ -28,6 +30,7 @@ mod tests {
     #[test]
     fn test_nodes_by_depth_from() {
         let g = unlabeled::from_string("[a-b, b-c, e, a-c, a-d]");
-        assert_eq!(nodes_by_depth_from(&g, 'd'), vec!['c', 'b', 'a', 'd']);
+        let nodes = nodes_by_depth_from(&g, 'd');
+        assert!(nodes == vec!['c', 'b', 'a', 'd'] || nodes == vec!['b', 'c', 'a', 'd']);
     }
 }
